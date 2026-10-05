@@ -1,12 +1,12 @@
 # Frontend – Evidence projektů a členů týmů
 
-Frontendová část fullstack aplikace pro evidenci projektů, lidí a týmů. Klientskou aplikaci jsem postavil jako Single Page Application v Reactu a TypeScriptu, pro rychlý dev server a build jsem zvolil Vite a o styling se stará Tailwind CSS s komponentami ze shadcn/ui.
+Frontendová část fullstack aplikace pro evidenci projektů, lidí a týmů. Klientská aplikace je navržena jako Single Page Application v Reactu a TypeScriptu. O rychlý vývojový server a produkční build se stará Vite, zatímco vizuální vrstva a styling jsou postaveny na Tailwind CSS v kombinaci s komponentami ze shadcn/ui.
 
 ---
 
-## Co aplikace dělá a jak jsem ji navrhl
+## Přehled aplikace a architektura
 
-Aplikace funguje jako webové rozhraní napojené na backendové REST API. Chtěl jsem, aby bylo UI čisté, svižné a responzivní jak na velkém monitoru, tak na displeji mobilního telefonu.
+Aplikace funguje jako webové rozhraní napojené na backendové REST API. Uživatelské rozhraní klade důraz na přehlednost, rychlou odezvu a plnou responzivitu od velkých monitorů až po displeje mobilních telefonů.
 
 ### Přehled funkcionality
 
@@ -28,28 +28,29 @@ Aplikace funguje jako webové rozhraní napojené na backendové REST API. Chtě
   - V detailu týmu jde snadno spravovat jeho složení, tedy přidávat a odebírat členy, i propojovat tým s projekty.
 
 - **Design, responzivita a UX**:
-  - **Plně responzivní layout**: Rozvržení jsem navrhl mobile-first tak, aby se pohodlně ovládalo na mobilu, tabletu i desktopu. Tabulky mají horizontal scroll, modály i formuláře se fluidně přizpůsobují šířce displeje a akční tlačítka se na menších obrazovkách logicky stackují.
+  - **Plně responzivní layout**: Rozvržení je navrženo podle principu mobile-first tak, aby se pohodlně ovládalo na mobilu, tabletu i desktopu. Tabulky mají horizontal scroll, modály i formuláře se fluidně přizpůsobují šířce displeje a akční tlačítka se na menších obrazovkách logicky stackují.
   - **Dark mode a Light mode**: V headeru je toggle mezi světlým a tmavým motivem. Vybraný režim se automaticky ukládá do `localStorage`, takže preference zůstává zachovaná i po zavření browseru.
   - **Dva jazyky**: Celé UI je kompletně lokalizované do češtiny i angličtiny s možností přepnout jazyk jedním klikem v hlavičce bez nutnosti reloadu stránky.
-  - **DB reset button ve footeru**: Přímo do patičky aplikace jsem přidal praktické tlačítko pro reset databáze. Na jeden klik zavolá endpoint `/api/database/init` a vrátí celou databázi do výchozího stavu se seed daty, což je ideální pro testování a demo aplikace.
+  - **DB reset button ve footeru**: V patičce aplikace je k dispozici tlačítko pro rychlý reset databáze. Na jeden klik zavolá endpoint `/api/database/init` a vrátí celou databázi do výchozího stavu se seed daty, což je ideální pro testování a demo aplikace.
   - **Toast notifikace**: Feedback po provedených mutacích i chybové hlášky z API se zobrazují přes toast zprávy knihovny Sonner.
 
 ---
 
 ## OpenAPI a typová bezpečnost
 
-Jako velké plus bych chtěl vypíchnout zapojení **OpenAPI**. Místo toho, abych na frontendu ručně přepisoval TypeScript typy a interfaces z backendu, kde hrozí překlep nebo přehlédnutí změny fieldu, jsem využil specifikaci `openapi.json` přímo ze Symfony backendu.
+Klíčovým architektonickým prvkem je integrace **OpenAPI**. Místo ručního definování TypeScript rozhraní na frontendu se datové typy generují přímo ze specifikace `openapi.json` ze Symfony backendu, což eliminuje riziko nekonzistencí či chyb z nepozornosti při změnách API.
 
-Pomocí knihovny `openapi-fetch` a vygenerovaných TypeScript definic mám volání API kompletně type-safe:
+Pomocí knihovny `openapi-fetch` a vygenerovaných TypeScript definic je volání API kompletně type-safe:
+
 - TypeScript přesně ví, jaké query parametry a payload který endpoint bere a jaký shape dat vrátí response.
 - Autocomplete v IDE napovídá dostupné endpointy i property.
-- Jakmile se na backendu změní schéma, frontend mě na breaking change při kompilaci okamžitě upozorní.
+- Jakmile se na backendu změní schéma, frontend na breaking change při kompilaci okamžitě upozorní.
 
 ---
 
 ## E2E testování s Playwrightem
 
-Abych měl jistotu, že aplikace bezchybně šlape v reálném browseru, napsal jsem sadu **E2E testů v Playwrightu**:
+Pro ověření bezchybného chování aplikace v reálném prohlížeči je projekt vybaven sadou **E2E testů v Playwrightu**:
 
 - Testy pokrývají kompletní CRUD operace pro projekty, osoby i týmy.
 - V souboru `project-lifecycle.spec.ts` je pokročilý test celého lifecycle, který simuluje typický flow z praxe: vytvoření týmu, přidání lidí, start projektu, přiřazení týmu i direct assignment jednotlivce, odebrání týmu a kontrola, že člověk s přímým přiřazením na projektu správně zůstává, a následný cleanup.
@@ -139,6 +140,7 @@ Aplikace naběhne na adrese:
 Předpokládá se, že backend běží na `http://localhost:8000/api`.
 
 Vypnutí kontejneru:
+
 ```bash
 docker compose down
 ```
@@ -148,12 +150,14 @@ docker compose down
 Požadavky: Node.js 20+ a npm.
 
 1. Instalace závislostí:
+
    ```bash
    cd frontend
    npm install
    ```
 
 2. Kontrola adresy backendu v `.env` s výchozí hodnotou `http://localhost:8000/api`:
+
    ```bash
    VITE_API_URL=http://localhost:8000/api
    ```
