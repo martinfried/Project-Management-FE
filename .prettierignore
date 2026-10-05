@@ -1,0 +1,9 @@
+node_modules/
+dist/
+dist-ssr/
+build/
+coverage/
+test-results/
+playwright-report/
+.vite/
+package-lock.json
