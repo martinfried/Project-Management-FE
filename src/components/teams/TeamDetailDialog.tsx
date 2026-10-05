@@ -4,7 +4,7 @@ import { Users, FolderKanban, Pencil, Loader2, Plus, Trash2, ChevronDown } from 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogLoading } from "@/components/ui/dialog";
+import { Dialog, DialogCloseButton, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogLoading } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/sonner";
 import { api } from "@/services/api";
 import { useTranslation } from "@/i18n";
@@ -146,9 +146,14 @@ function TeamDetailContent({ teamId, onEdit, onUpdate }: TeamDetailContentProps)
   };
 
   return (
-    <DialogContent className="max-w-xl max-h-[85vh] overflow-y-auto">
+    <DialogContent className="max-w-xl max-h-[85vh] overflow-auto" showCloseButton={false}>
       {loading ? (
-        <DialogLoading text={t.teams.loadingDetails} />
+        <div className="relative">
+          <div className="flex justify-end">
+            <DialogCloseButton />
+          </div>
+          <DialogLoading text={t.teams.loadingDetails} />
+        </div>
       ) : teamDetail ? (
         <div className="space-y-6">
           <DialogHeader>
@@ -161,10 +166,13 @@ function TeamDetailContent({ teamId, onEdit, onUpdate }: TeamDetailContentProps)
                   {currentMembers.length} {t.common.members}
                 </Badge>
               </div>
-              <Button variant="outline" size="sm" onClick={() => onEdit(teamDetail)} className="gap-1.5 text-xs h-7 cursor-pointer shrink-0">
-                <Pencil className="h-3.5 w-3.5" />
-                <span>{t.common.edit}</span>
-              </Button>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Button variant="outline" size="sm" onClick={() => onEdit(teamDetail)} className="gap-1.5 text-xs h-7 cursor-pointer">
+                  <Pencil className="h-3.5 w-3.5" />
+                  <span>{t.common.edit}</span>
+                </Button>
+                <DialogCloseButton />
+              </div>
             </div>
             <DialogTitle className="text-xl mt-1">{teamDetail.name}</DialogTitle>
             <DialogDescription className="text-sm">{teamDetail.description || t.teams.noDescription}</DialogDescription>
@@ -182,9 +190,7 @@ function TeamDetailContent({ teamId, onEdit, onUpdate }: TeamDetailContentProps)
                   <div key={member.id} data-testid={`team-member-row-${member.id}`} className="p-2 rounded-md border bg-card text-xs flex items-center justify-between gap-2">
                     <div className="min-w-0">
                       <div className="font-medium text-foreground truncate">{member.name}</div>
-                      <div className="text-[11px] text-muted-foreground truncate">
-                        {member.email} • {member.role}
-                      </div>
+                      <div className="text-[11px] text-muted-foreground truncate">{member.email}</div>
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
                       <Badge variant="outline" className="text-[10px]">
@@ -308,7 +314,12 @@ function TeamDetailContent({ teamId, onEdit, onUpdate }: TeamDetailContentProps)
           </div>
         </div>
       ) : (
-        <p className="text-center py-6 text-xs text-muted-foreground">{t.teams.teamNotFound}</p>
+        <div>
+          <div className="flex justify-end">
+            <DialogCloseButton />
+          </div>
+          <p className="text-center py-6 text-xs text-muted-foreground">{t.teams.teamNotFound}</p>
+        </div>
       )}
     </DialogContent>
   );

@@ -4,7 +4,7 @@ import { Users, Building2, UserCheck, Pencil, Loader2, Plus, Trash2, ChevronDown
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogLoading } from "@/components/ui/dialog";
+import { Dialog, DialogCloseButton, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogLoading } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/sonner";
 import { api } from "@/services/api";
 import { useTranslation } from "@/i18n";
@@ -140,9 +140,14 @@ function ProjectDetailContent({ projectId, onEdit, onUpdate }: ProjectDetailCont
   };
 
   return (
-    <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+    <DialogContent className="max-w-2xl max-h-[85vh] overflow-auto" showCloseButton={false}>
       {loading ? (
-        <DialogLoading text={t.projects.loadingDetails} />
+        <div className="relative">
+          <div className="flex justify-end">
+            <DialogCloseButton />
+          </div>
+          <DialogLoading text={t.projects.loadingDetails} />
+        </div>
       ) : projectDetail ? (
         <div className="space-y-6">
           <DialogHeader>
@@ -153,10 +158,13 @@ function ProjectDetailContent({ projectId, onEdit, onUpdate }: ProjectDetailCont
                 </Badge>
                 <StatusBadge status={projectDetail.status} />
               </div>
-              <Button variant="outline" size="sm" onClick={() => onEdit(projectDetail)} className="gap-1.5 text-xs h-7 cursor-pointer shrink-0">
-                <Pencil className="h-3.5 w-3.5" />
-                <span>{t.common.edit}</span>
-              </Button>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <Button variant="outline" size="sm" onClick={() => onEdit(projectDetail)} className="gap-1.5 text-xs h-7 cursor-pointer">
+                  <Pencil className="h-3.5 w-3.5" />
+                  <span>{t.common.edit}</span>
+                </Button>
+                <DialogCloseButton />
+              </div>
             </div>
             <DialogTitle className="text-xl mt-1">{projectDetail.name}</DialogTitle>
             <DialogDescription className="text-sm">{projectDetail.description || t.projects.noDescription}</DialogDescription>
@@ -266,7 +274,7 @@ function ProjectDetailContent({ projectId, onEdit, onUpdate }: ProjectDetailCont
                       </div>
                     </div>
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <Badge variant="outline" className="text-[10px] capitalize" data-testid={`participant-badge-${person.id}`}>
+                      <Badge variant="outline" className="text-[10px] capitalize max-w-[150px] sm:max-w-[220px] truncate" data-testid={`participant-badge-${person.id}`}>
                         {person.assignmentType === "both"
                           ? t.projects.assignmentBoth
                           : person.assignmentType === "team"
@@ -328,7 +336,12 @@ function ProjectDetailContent({ projectId, onEdit, onUpdate }: ProjectDetailCont
           </div>
         </div>
       ) : (
-        <p className="text-center py-6 text-xs text-muted-foreground">{t.projects.projectNotFound}</p>
+        <div>
+          <div className="flex justify-end">
+            <DialogCloseButton />
+          </div>
+          <p className="text-center py-6 text-xs text-muted-foreground">{t.projects.projectNotFound}</p>
+        </div>
       )}
     </DialogContent>
   );
