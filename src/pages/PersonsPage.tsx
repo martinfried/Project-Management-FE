@@ -107,7 +107,8 @@ export function PersonsPage() {
         cell: ({ row }) => <span className="text-xs font-medium text-foreground">{row.original.role}</span>,
       },
       {
-        accessorKey: "team",
+        id: "team",
+        accessorFn: (row) => row.team?.name || "",
         header: t.persons.colTeam,
         cell: ({ row }) =>
           row.original.team ? (
@@ -117,7 +118,8 @@ export function PersonsPage() {
           ),
       },
       {
-        accessorKey: "projectsCount",
+        id: "projectsCount",
+        accessorFn: (row) => (row as unknown as { projectsCount?: number }).projectsCount ?? 0,
         header: t.persons.colProjects,
         cell: ({ row }) => (
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -128,6 +130,7 @@ export function PersonsPage() {
       },
       {
         id: "actions",
+        enableSorting: false,
         header: () => <div className="text-right">{t.common.actions}</div>,
         cell: ({ row }) => (
           <div className="flex items-center justify-end gap-1">

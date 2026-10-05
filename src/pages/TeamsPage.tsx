@@ -109,7 +109,8 @@ export function TeamsPage() {
         ),
       },
       {
-        accessorKey: "projectsCount",
+        id: "projectsCount",
+        accessorFn: (row) => (row as unknown as { projectsCount?: number }).projectsCount ?? 0,
         header: t.teams.colProjects,
         cell: ({ row }) => (
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -120,6 +121,7 @@ export function TeamsPage() {
       },
       {
         id: "actions",
+        enableSorting: false,
         header: () => <div className="text-right">{t.common.actions}</div>,
         cell: ({ row }) => (
           <div className="flex items-center justify-end gap-1">
@@ -188,6 +190,7 @@ export function TeamsPage() {
         teamId={selectedTeamId}
         onOpenChange={(open) => !open && setSelectedTeamId(null)}
         onEdit={(team) => setEditingTeam(team)}
+        onUpdate={() => loadTeams(true)}
         refreshKey={detailRefreshKey}
       />
 

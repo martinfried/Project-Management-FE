@@ -174,6 +174,7 @@ export function ProjectsPage() {
       },
       {
         id: "actions",
+        enableSorting: false,
         header: () => <div className="text-right">{t.common.actions}</div>,
         cell: ({ row }) => {
           const nextStatus = NEXT_PROJECT_STATUS[row.original.status];

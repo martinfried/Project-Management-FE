@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { flexRender, useReactTable } from "@tanstack/react-table";
 import { getCoreRowModel, getPaginationRowModel, getSortedRowModel, type ColumnDef, type SortingState } from "@tanstack/table-core";
-
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -15,11 +14,19 @@ export interface DataTableProps<TData, TValue> {
   pageSize?: number;
   loading?: boolean;
   loadingText?: string;
+  defaultSorting?: SortingState;
 }
 
-export function DataTable<TData, TValue>({ columns, data, pageSize = 10, loading = false, loadingText }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  pageSize = 10,
+  loading = false,
+  loadingText,
+  defaultSorting = [],
+}: DataTableProps<TData, TValue>) {
   const { t } = useTranslation();
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>(defaultSorting);
 
   const table = useReactTable({
     data,
@@ -28,6 +35,7 @@ export function DataTable<TData, TValue>({ columns, data, pageSize = 10, loading
       pagination: {
         pageSize,
       },
+      sorting: defaultSorting,
     },
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -57,11 +65,40 @@ export function DataTable<TData, TValue>({ columns, data, pageSize = 10, loading
           <TableHeader className="bg-muted/50">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="font-semibold">
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  const canSort = header.column.getCanSort();
+                  const isSorted = header.column.getIsSorted();
+
+                  return (
+                    <TableHead
+                      key={header.id}
+                      className="font-semibold"
+                      aria-sort={isSorted === "asc" ? "ascending" : isSorted === "desc" ? "descending" : undefined}
+                    >
+                      {header.isPlaceholder ? null : canSort ? (
+                        <button
+                          type="button"
+                          onClick={header.column.getToggleSortingHandler()}
+                          data-testid={`sort-${header.column.id}`}
+                          className="flex items-center gap-1.5 hover:text-foreground transition-colors cursor-pointer select-none -ml-1 px-1 py-0.5 rounded-md hover:bg-muted/80 group font-semibold text-inherit"
+                        >
+                          <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                          <span className="shrink-0">
+                            {isSorted === "asc" ? (
+                              <ArrowUp className="h-3.5 w-3.5 text-primary" />
+                            ) : isSorted === "desc" ? (
+                              <ArrowDown className="h-3.5 w-3.5 text-primary" />
+                            ) : (
+                              <ArrowUpDown className="h-3.5 w-3.5 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
+                            )}
+                          </span>
+                        </button>
+                      ) : (
+                        flexRender(header.column.columnDef.header, header.getContext())
+                      )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
