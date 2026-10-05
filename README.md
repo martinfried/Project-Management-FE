@@ -31,6 +31,14 @@ npm run lint
 
 ### Docker
 
+Within the `frontend/` directory:
+
+```bash
+docker compose up --build
+```
+
+Or using plain Docker:
+
 ```bash
 docker build -t project-management-frontend .
 docker run -p 3000:80 project-management-frontend
