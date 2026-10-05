@@ -62,6 +62,31 @@ function ProjectDetailContent({ projectId, onEdit, onUpdate }: ProjectDetailCont
     };
   }, [projectId]);
 
+  const assignedTeams: TeamSimple[] = useMemo(() => {
+    if (!projectDetail?.teams) return [];
+    return Array.isArray(projectDetail.teams) ? projectDetail.teams : (Object.values(projectDetail.teams) as TeamSimple[]);
+  }, [projectDetail]);
+
+  const participants: Participant[] = useMemo(() => {
+    if (!projectDetail?.allParticipants) return [];
+    return Array.isArray(projectDetail.allParticipants) ? projectDetail.allParticipants : (Object.values(projectDetail.allParticipants) as Participant[]);
+  }, [projectDetail]);
+
+  const directPersons: PersonSimple[] = useMemo(() => {
+    if (!projectDetail?.persons) return [];
+    return Array.isArray(projectDetail.persons) ? projectDetail.persons : (Object.values(projectDetail.persons) as PersonSimple[]);
+  }, [projectDetail]);
+
+  const availableTeams = useMemo(() => {
+    if (!projectDetail) return [];
+    return allTeams.filter((t) => !assignedTeams.some((pt) => pt.id === t.id));
+  }, [allTeams, assignedTeams, projectDetail]);
+
+  const availablePersons = useMemo(() => {
+    if (!projectDetail) return [];
+    return allPersons.filter((p) => !directPersons.some((dp) => dp.id === p.id));
+  }, [allPersons, directPersons, projectDetail]);
+
   const handleAssignTeam = async () => {
     if (!selectedTeamId || !projectDetail || assigningTeam) return;
     try {
@@ -113,31 +138,6 @@ function ProjectDetailContent({ projectId, onEdit, onUpdate }: ProjectDetailCont
       toast.error(err instanceof Error ? err.message : "Failed to remove person");
     }
   };
-
-  const assignedTeams: TeamSimple[] = useMemo(() => {
-    if (!projectDetail?.teams) return [];
-    return Array.isArray(projectDetail.teams) ? projectDetail.teams : (Object.values(projectDetail.teams) as TeamSimple[]);
-  }, [projectDetail]);
-
-  const participants: Participant[] = useMemo(() => {
-    if (!projectDetail?.allParticipants) return [];
-    return Array.isArray(projectDetail.allParticipants) ? projectDetail.allParticipants : (Object.values(projectDetail.allParticipants) as Participant[]);
-  }, [projectDetail]);
-
-  const directPersons: PersonSimple[] = useMemo(() => {
-    if (!projectDetail?.persons) return [];
-    return Array.isArray(projectDetail.persons) ? projectDetail.persons : (Object.values(projectDetail.persons) as PersonSimple[]);
-  }, [projectDetail]);
-
-  const availableTeams = useMemo(() => {
-    if (!projectDetail) return [];
-    return allTeams.filter((t) => !assignedTeams.some((pt) => pt.id === t.id));
-  }, [allTeams, assignedTeams, projectDetail]);
-
-  const availablePersons = useMemo(() => {
-    if (!projectDetail) return [];
-    return allPersons.filter((p) => !directPersons.some((dp) => dp.id === p.id));
-  }, [allPersons, directPersons, projectDetail]);
 
   return (
     <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
