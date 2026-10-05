@@ -140,4 +140,95 @@ test.describe("Projects CRUD Scenarios", () => {
     await updatedRow.getByTestId("project-delete-btn").click();
     await expect(page.getByText(projectName)).not.toBeVisible();
   });
+
+  test("empties assigned direct participants, adds one, then adds another and sees all participants properly in the list", async ({ page }) => {
+    const timestamp = Date.now();
+    const person1Name = `Proj Person A ${timestamp}`;
+    const person2Name = `Proj Person B ${timestamp}`;
+    const projectName = `Multi Participant Project ${timestamp}`;
+
+    // 1. Create Person A
+    await page.goto("/persons");
+    await expect(page.getByTestId("create-person-btn")).toBeVisible();
+    await page.getByTestId("create-person-btn").click();
+    await page.getByTestId("person-name-input").fill(person1Name);
+    await page.getByTestId("person-email-input").fill(`proj.personA.${timestamp}@example.com`);
+    await page.getByTestId("person-role-input").fill("Architect");
+    await page.getByTestId("person-submit-btn").click();
+    await expect(page.getByTestId("person-form-dialog")).not.toBeVisible();
+
+    // 2. Create Person B
+    await page.getByTestId("create-person-btn").click();
+    await page.getByTestId("person-name-input").fill(person2Name);
+    await page.getByTestId("person-email-input").fill(`proj.personB.${timestamp}@example.com`);
+    await page.getByTestId("person-role-input").fill("DevOps");
+    await page.getByTestId("person-submit-btn").click();
+    await expect(page.getByTestId("person-form-dialog")).not.toBeVisible();
+
+    // 3. Create a project
+    await page.goto("/projects");
+    await expect(page.getByTestId("create-project-btn")).toBeVisible();
+    await page.getByTestId("create-project-btn").click();
+    await page.getByTestId("project-name-input").fill(projectName);
+    await page.getByTestId("project-submit-btn").click();
+    await expect(page.getByTestId("project-form-dialog")).not.toBeVisible();
+
+    // 4. Open project details
+    const row = page.locator("tr", { hasText: projectName });
+    await row.getByTestId("project-view-btn").click();
+    const dialog = page.locator("[role='dialog']");
+    await expect(dialog).toBeVisible();
+
+    // 5. Add Person A
+    const select = dialog.getByTestId("assign-person-select");
+    const optA = select.locator("option", { hasText: person1Name });
+    await expect(optA).toBeAttached();
+    await select.selectOption((await optA.getAttribute("value")) || "");
+    await dialog.getByTestId("assign-person-btn").click();
+
+    // Verify Person A is visible
+    const participantARow = dialog.locator("[data-testid^='participant-row-']", { hasText: person1Name });
+    await expect(participantARow).toBeVisible();
+
+    // 6. Remove Person A (now direct participants are empty)
+    await participantARow.locator("[data-testid^='remove-person-btn-']").click();
+    await expect(participantARow).not.toBeVisible();
+
+    // 7. Add Person A back
+    const optA2 = dialog.getByTestId("assign-person-select").locator("option", { hasText: person1Name });
+    await expect(optA2).toBeAttached();
+    await dialog.getByTestId("assign-person-select").selectOption((await optA2.getAttribute("value")) || "");
+    await dialog.getByTestId("assign-person-btn").click();
+
+    // Verify Person A is immediately visible
+    await expect(dialog.locator("[data-testid^='participant-row-']", { hasText: person1Name })).toBeVisible();
+
+    // 8. Add Person B
+    const optB = dialog.getByTestId("assign-person-select").locator("option", { hasText: person2Name });
+    await expect(optB).toBeAttached();
+    await dialog.getByTestId("assign-person-select").selectOption((await optB.getAttribute("value")) || "");
+    await dialog.getByTestId("assign-person-btn").click();
+
+    // Verify BOTH Person A and Person B are visible
+    await expect(dialog.locator("[data-testid^='participant-row-']", { hasText: person1Name })).toBeVisible();
+    await expect(dialog.locator("[data-testid^='participant-row-']", { hasText: person2Name })).toBeVisible();
+
+    // Clean up
+    await page.keyboard.press("Escape");
+    await expect(dialog).not.toBeVisible();
+
+    page.once("dialog", (d) => d.accept());
+    await row.getByTestId("project-delete-btn").click();
+    await expect(page.getByText(projectName)).not.toBeVisible();
+
+    await page.goto("/persons");
+    page.once("dialog", (d) => d.accept());
+    await page.locator("tr", { hasText: person1Name }).getByTestId("person-delete-btn").click();
+    await expect(page.getByText(person1Name)).not.toBeVisible();
+
+    page.once("dialog", (d) => d.accept());
+    await page.locator("tr", { hasText: person2Name }).getByTestId("person-delete-btn").click();
+    await expect(page.getByText(person2Name)).not.toBeVisible();
+  });
 });
+

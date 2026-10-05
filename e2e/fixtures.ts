@@ -178,6 +178,50 @@ export class TeamsPageHelper {
     await this.page.getByTestId("team-search-input").fill(query);
   }
 
+  async assignPerson(personName: string) {
+    const dialog = this.page.locator("[role='dialog']");
+    const select = dialog.getByTestId("assign-person-select");
+    const option = select.locator("option", { hasText: personName });
+    await expect(option).toBeAttached();
+    const val = await option.getAttribute("value");
+    if (val) {
+      await select.selectOption(val);
+    }
+    await dialog.getByTestId("assign-person-btn").click();
+  }
+
+  async removePerson(personName: string) {
+    const dialog = this.page.locator("[role='dialog']");
+    const memberRow = dialog.locator("[data-testid^='team-member-row-']", { hasText: personName });
+    await memberRow.locator("[data-testid^='remove-member-btn-']").click();
+  }
+
+  getMemberRow(personName: string): Locator {
+    return this.page.locator("[role='dialog'] [data-testid^='team-member-row-']", { hasText: personName });
+  }
+
+  async assignProject(projectName: string) {
+    const dialog = this.page.locator("[role='dialog']");
+    const select = dialog.getByTestId("assign-project-select");
+    const option = select.locator("option", { hasText: projectName });
+    await expect(option).toBeAttached();
+    const val = await option.getAttribute("value");
+    if (val) {
+      await select.selectOption(val);
+    }
+    await dialog.getByTestId("assign-project-btn").click();
+  }
+
+  async removeProject(projectName: string) {
+    const dialog = this.page.locator("[role='dialog']");
+    const projRow = dialog.locator("[data-testid^='assigned-project-row-']", { hasText: projectName });
+    await projRow.locator("[data-testid^='remove-project-btn-']").click();
+  }
+
+  getAssignedProjectRow(projectName: string): Locator {
+    return this.page.locator("[role='dialog'] [data-testid^='assigned-project-row-']", { hasText: projectName });
+  }
+
   async deleteTeam(teamName: string) {
     this.page.once("dialog", (dialog) => dialog.accept());
     const row = this.getRow(teamName);
@@ -235,7 +279,7 @@ export class PersonsPageHelper {
     if (data.teamLabel) {
       await this.page.getByTestId("person-team-select").selectOption({ label: data.teamLabel });
     } else if (data.clearTeam) {
-      await this.page.getByTestId("person-team-select").selectOption("");
+      await this.page.getByTestId("person-team-select").selectOption({ value: "" });
     }
 
     await this.page.getByTestId("person-submit-btn").click();
