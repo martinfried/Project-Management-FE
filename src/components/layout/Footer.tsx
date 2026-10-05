@@ -8,6 +8,7 @@ import { useTranslation } from "@/i18n";
 import { useTheme, Theme } from "@/theme";
 import teamIcon from "@/assets/team.png";
 import teamLightIcon from "@/assets/team-light.png";
+import packageJson from "../../../package.json";
 
 export function Footer() {
   const { t } = useTranslation();
@@ -40,7 +41,7 @@ export function Footer() {
             <img src={appIcon} alt="App Icon" className="h-full w-full object-contain" />
           </div>
           <span className="font-semibold text-foreground">{t.footer.systemTitle}</span>
-          <span className="font-mono text-[10px] px-1.5 py-0.5 rounded-md bg-muted/70 text-muted-foreground border border-border/60">{t.footer.version}</span>
+          <span className="font-mono text-[10px] px-1.5 py-0.5 rounded-md bg-muted/70 text-muted-foreground border border-border/60">v{packageJson.version}</span>
         </div>
 
         {/* Center: Page Links & Reset DB Button */}

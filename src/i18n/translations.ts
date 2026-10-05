@@ -1,5 +1,3 @@
-import packageJson from "../../package.json";
-
 export type Language = "en" | "cs";
 
 export const translations = {
@@ -54,7 +52,6 @@ export const translations = {
       openApiJson: "OpenAPI JSON",
       apiHealth: "API Health",
       author: "Martin Fried",
-      version: `v${packageJson.version}`,
       createdBy: "Author",
     },
     table: {
@@ -268,7 +265,6 @@ export const translations = {
       openApiJson: "OpenAPI JSON",
       apiHealth: "Stav API",
       author: "Martin Fried",
-      version: `v${packageJson.version}`,
       createdBy: "Autor",
     },
     table: {
@@ -433,4 +429,8 @@ export const translations = {
   },
 } as const;
 
-export type TranslationsSchema = typeof translations.en;
+type DeepStringRecord<T> = {
+  readonly [K in keyof T]: T[K] extends object ? DeepStringRecord<T[K]> : string;
+};
+
+export type TranslationsSchema = DeepStringRecord<typeof translations.en>;

@@ -37,7 +37,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const t = translations[language] as TranslationsSchema;
+  const t: TranslationsSchema = translations[language];
 
   const format = useCallback((template: string, values: Record<string, string | number>) => {
     let result = template;
