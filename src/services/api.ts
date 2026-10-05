@@ -15,8 +15,8 @@ import type {
   FilterStatus,
 } from "../types";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-const SERVER_BASE = API_BASE.replace(/\/api\/?$/, "");
+const API_BASE = import.meta.env.VITE_API_URL || "/api";
+const SERVER_BASE = API_BASE.startsWith("http") ? API_BASE.replace(/\/api\/?$/, "") : undefined;
 
 /**
  * Fully typed OpenAPI fetch client.
