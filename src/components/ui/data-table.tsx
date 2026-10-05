@@ -122,14 +122,14 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
 
-      <div className="flex items-center justify-end gap-3 sm:gap-4 px-1 py-1 text-xs text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <span>
+      <div className="flex flex-wrap sm:flex-nowrap items-center justify-end gap-3 sm:gap-4 px-1 py-1 text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 whitespace-nowrap">
+          <span className="whitespace-nowrap">
             {t.table.page} <span className="font-semibold text-foreground font-mono">{pageIndex}</span> {t.table.of}{" "}
             <span className="font-semibold text-foreground font-mono">{pageCount}</span>
           </span>
           <span className="text-muted-foreground/30">•</span>
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-muted/60 text-muted-foreground border border-border/60">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-muted/60 text-muted-foreground border border-border/60 whitespace-nowrap">
             <span className="font-semibold text-foreground font-mono mr-1">{totalRows}</span>
             <span>{t.table.total}</span>
           </span>
