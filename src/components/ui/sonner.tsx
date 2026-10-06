@@ -4,7 +4,7 @@ import { useTheme, Theme } from "@/theme";
 
 type ToasterProps = ComponentProps<typeof Sonner>;
 
-function Toaster({ ...props }: ToasterProps) {
+function Toaster({ position = "top-center", ...props }: ToasterProps) {
   const { resolvedTheme } = useTheme();
 
   return (
@@ -13,7 +13,7 @@ function Toaster({ ...props }: ToasterProps) {
       className="toaster group"
       richColors
       closeButton
-      position="top-right"
+      position={position}
       toastOptions={{
         classNames: {
           toast:
