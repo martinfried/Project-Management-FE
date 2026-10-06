@@ -97,28 +97,28 @@ npx playwright show-report
 frontend/
 ├── src/
 │   ├── components/
-│   │   ├── layout/              # Header, navigace, footer s tlačítkem resetu DB, theme toggle
-│   │   ├── projects/            # Dialogy pro detail, formuláře a toolbary projektů
-│   │   ├── persons/             # Dialogy a formuláře pro správu osob
-│   │   ├── teams/               # Dialogy a formuláře pro správu týmů
-│   │   └── ui/                  # Znovupoužitelné UI prvky jako buttons, dialogs, tables
-│   ├── hooks/                   # Vlastní hooky jako useDebouncedEffect
-│   ├── i18n/                    # Překlady a lokalizace pro češtinu a angličtinu
-│   ├── pages/                   # Stránky ProjectsPage, PersonsPage, TeamsPage
-│   ├── services/api.ts          # Type-safe API klient pro komunikaci s backendem
-│   ├── types/                   # Datové typy odvozené z OpenAPI
-│   ├── App.tsx                  # Klientské routování a app layout
-│   └── main.tsx                 # Entrypoint aplikace
-├── e2e/                         # Playwright E2E testy
-│   ├── fixtures.ts              # Page Object modely a helpery pro testy
-│   ├── project-lifecycle.spec.ts# Komplexní test průchodu životním cyklem projektu
-│   ├── projects.spec.ts         # Testy projektů
-│   ├── persons.spec.ts          # Testy osob
-│   └── teams.spec.ts            # Testy týmů
-├── Dockerfile                   # Multi-stage Dockerfile pro Node build a Nginx
-├── docker-compose.yml           # Compose setup pro lokální běh frontendu v kontejneru
-├── nginx.conf                   # Konfigurace Nginxu pro SPA routing
-└── package.json                 # Skripty a npm dependencies
+│   │   ├── layout/                  # Header, navigace, footer s tlačítkem resetu DB, theme toggle
+│   │   ├── projects/                # Dialogy pro detail, formuláře a toolbary projektů
+│   │   ├── persons/                 # Dialogy a formuláře pro správu osob
+│   │   ├── teams/                   # Dialogy a formuláře pro správu týmů
+│   │   └── ui/                      # Znovupoužitelné UI prvky jako buttons, dialogs, tables
+│   ├── hooks/                       # Vlastní hooky jako useDebouncedEffect
+│   ├── i18n/                        # Překlady a lokalizace pro češtinu a angličtinu
+│   ├── pages/                       # Stránky ProjectsPage, PersonsPage, TeamsPage
+│   ├── services/api.ts              # Type-safe API klient pro komunikaci s backendem
+│   ├── types/                       # Datové typy odvozené z OpenAPI
+│   ├── App.tsx                      # Klientské routování a app layout
+│   └── main.tsx                     # Entrypoint aplikace
+├── e2e/                             # Playwright E2E testy
+│   ├── fixtures.ts                  # Page Object modely a helpery pro testy
+│   ├── project-lifecycle.spec.ts    # Komplexní test průchodu životním cyklem projektu
+│   ├── projects.spec.ts             # Testy projektů
+│   ├── persons.spec.ts              # Testy osob
+│   └── teams.spec.ts                # Testy týmů
+├── Dockerfile                       # Multi-stage Dockerfile pro Node build a Nginx
+├── docker-compose.yml               # Compose setup pro lokální běh frontendu v kontejneru
+├── nginx.conf                       # Konfigurace Nginxu pro SPA routing
+└── package.json                     # Skripty a npm dependencies
 ```
 
 ---
