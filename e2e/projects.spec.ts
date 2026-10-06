@@ -70,6 +70,30 @@ test.describe("Projects CRUD Scenarios", () => {
     await page.getByTestId("project-end-date-input").fill("2030-01-20");
     await expect(page.getByTestId("error-end-date-before-start")).not.toBeVisible();
     await expect(page.getByTestId("project-submit-btn")).toBeEnabled();
+
+    // Create the project to test editing with historical date
+    await page.getByTestId("project-submit-btn").click();
+    await expect(page.getByTestId("project-form-dialog")).not.toBeVisible();
+
+    const row = page.locator("tr", { hasText: "Date Constraint Test" });
+    await expect(row).toBeVisible();
+
+    // 5. Open edit dialog and verify historical start date is allowed on edit
+    await row.getByTestId("project-edit-btn").click();
+    await expect(page.getByTestId("project-form-dialog")).toBeVisible();
+
+    await page.getByTestId("project-start-date-input").fill("2021-05-15");
+    await expect(page.getByTestId("error-start-date-past")).not.toBeVisible();
+    await expect(page.getByTestId("project-submit-btn")).toBeEnabled();
+
+    // Submit the historical edit
+    await page.getByTestId("project-submit-btn").click();
+    await expect(page.getByTestId("project-form-dialog")).not.toBeVisible();
+
+    // Clean up
+    page.once("dialog", (dialog) => dialog.accept());
+    await row.getByTestId("project-delete-btn").click();
+    await expect(row).not.toBeVisible();
   });
 
   test("advances project status to next state via row quick action", async ({ page }) => {

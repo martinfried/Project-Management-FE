@@ -44,9 +44,10 @@ function ProjectFormContent({ project, onOpenChange, onSuccess }: ProjectFormCon
   const [endDate, setNewEndDate] = useState(project?.endDate ? project.endDate.split("T")[0] : "");
   const [submitting, setSubmitting] = useState(false);
 
-  const isStartDateInPast = Boolean(startDate && startDate < todayStr && (!isEdit || startDate !== initialStartDate));
+  const isStartDateInPast = Boolean(!isEdit && startDate && startDate < todayStr);
   const isEndDateBeforeStart = Boolean(startDate && endDate && endDate < startDate);
-  const hasDateErrors = isStartDateInPast || isEndDateBeforeStart;
+  const isEndDateInPast = Boolean(!isEdit && !startDate && endDate && endDate < todayStr);
+  const hasDateErrors = isStartDateInPast || isEndDateBeforeStart || isEndDateInPast;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -130,7 +131,7 @@ function ProjectFormContent({ project, onOpenChange, onSuccess }: ProjectFormCon
             <Input
               type="date"
               value={startDate}
-              min={isEdit && initialStartDate && initialStartDate < todayStr ? initialStartDate : todayStr}
+              min={isEdit ? undefined : todayStr}
               onChange={(e) => setNewStartDate(e.target.value)}
               data-testid="project-start-date-input"
               className={cn("text-sm", isStartDateInPast && "border-destructive focus-visible:ring-destructive text-destructive")}
@@ -146,14 +147,19 @@ function ProjectFormContent({ project, onOpenChange, onSuccess }: ProjectFormCon
             <Input
               type="date"
               value={endDate}
-              min={startDate || (isEdit && initialStartDate && initialStartDate < todayStr ? initialStartDate : todayStr)}
+              min={startDate || (isEdit ? undefined : todayStr)}
               onChange={(e) => setNewEndDate(e.target.value)}
               data-testid="project-end-date-input"
-              className={cn("text-sm", isEndDateBeforeStart && "border-destructive focus-visible:ring-destructive text-destructive")}
+              className={cn("text-sm", (isEndDateBeforeStart || isEndDateInPast) && "border-destructive focus-visible:ring-destructive text-destructive")}
             />
             {isEndDateBeforeStart && (
               <p className="text-[11px] text-destructive leading-tight font-medium" data-testid="error-end-date-before-start">
                 {t.projects.errorEndDateBeforeStart}
+              </p>
+            )}
+            {isEndDateInPast && !isEndDateBeforeStart && (
+              <p className="text-[11px] text-destructive leading-tight font-medium" data-testid="error-end-date-past">
+                {t.projects.errorStartDateInPast}
               </p>
             )}
           </div>
