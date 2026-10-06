@@ -46,4 +46,22 @@ test.describe("Persons CRUD Scenarios", () => {
     // Verify person is removed from table
     await expect(page.getByText(updatedPersonName)).not.toBeVisible();
   });
+
+  test("rejects creating a person with an existing duplicate email", async ({ page }) => {
+    await page.goto("/persons");
+    await expect(page.getByTestId("create-person-btn")).toBeVisible();
+
+    await page.getByTestId("create-person-btn").click();
+    await expect(page.getByTestId("person-form-dialog")).toBeVisible();
+
+    // Use John Smith's email which exists from seed data
+    await page.getByTestId("person-name-input").fill("Duplicate Email Person");
+    await page.getByTestId("person-email-input").fill("john.smith@example.com");
+    await page.getByTestId("person-role-input").fill("QA Engineer");
+    await page.getByTestId("person-submit-btn").click();
+
+    // Form should not close and error toast/message should appear
+    await expect(page.getByTestId("person-form-dialog")).toBeVisible();
+    await expect(page.getByText(/Email address already exists|already exists/i)).toBeVisible();
+  });
 });
